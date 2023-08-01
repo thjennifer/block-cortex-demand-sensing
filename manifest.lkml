@@ -23,3 +23,10 @@ constant: years_of_past_data {
    value: "1"
    export: override_required
 }
+
+
+##### for demo data replace current_date() with (SELECT MAX(SalesOrders.RequestedDeliveryDate_VDATU) FROM `@{GCP_PROJECT}.@{REPORTING_DATASET}.SalesOrders`)
+
+constant: use_for_current_date {
+  value: "(SELECT MAX(RequestedDeliveryDate_VDATU) FROM `@{GCP_PROJECT}.@{REPORTING_DATASET}.SalesOrders`)"
+}

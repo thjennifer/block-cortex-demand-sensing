@@ -3,6 +3,7 @@ connection: "@{CONNECTION_NAME}"
 
 # include all the views
 include: "/views/**/*.view"
+include: "/views_refinements/*.view"
 
 # Datagroups define a caching policy for an Explore. To learn more,
 # use the Quick Help panel on the right to see documentation.
@@ -25,7 +26,7 @@ persist_with: cortex_default_datagroup
 # Typically, join parameters require that you define the join type, join relationship, and a sql_on clause.
 # Each joined view also needs to define a primary key.
 
-# include: "/LookML_Dashboard/*.dashboard.lookml"
+include: "/LookML_Dashboard/*.dashboard.lookml"
 
 explore:  demand_sensing {
 }
