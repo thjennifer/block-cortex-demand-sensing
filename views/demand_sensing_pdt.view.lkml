@@ -8,7 +8,7 @@ view: demand_sensing_pdt {
     FROM
       date) AS week
   FROM
-    UNNEST(GENERATE_DATE_ARRAY(DATE_ADD(current_date(), INTERVAL -cast( @{years_of_past_data}  as INT64) YEAR), DATE_ADD(current_date(), INTERVAL 13 WEEK))) AS date ),
+    UNNEST(GENERATE_DATE_ARRAY(DATE_ADD(@{target_date}, INTERVAL -cast( @{years_of_past_data}  as INT64) YEAR), DATE_ADD(@{target_date}, INTERVAL 13 WEEK))) AS date ),
   Grid AS (
   SELECT
     DISTINCT SalesOrders.MaterialNumber_MATNR AS Product,

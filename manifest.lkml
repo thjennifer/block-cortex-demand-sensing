@@ -28,3 +28,7 @@ constant: years_of_past_data {
    value: "1"
    export: override_required
 }
+
+constant: target_date {
+  value: "'2022-04-22'"
+}

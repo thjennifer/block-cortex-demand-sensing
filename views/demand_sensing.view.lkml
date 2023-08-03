@@ -9,7 +9,7 @@ view: demand_sensing {
     FROM
       date) AS week
   FROM
-    UNNEST(GENERATE_DATE_ARRAY(DATE_ADD(current_date(), INTERVAL -cast(@{years_of_past_data} as INT64) YEAR), DATE_ADD(current_date(), INTERVAL 13 WEEK))) AS date ),
+    UNNEST(GENERATE_DATE_ARRAY(DATE_ADD(@{target_date}, INTERVAL -cast(@{years_of_past_data} as INT64) YEAR), DATE_ADD(@{target_date}, INTERVAL 13 WEEK))) AS date ),
   Grid AS (
   SELECT
     DISTINCT SalesOrders.MaterialNumber_MATNR AS Product,
@@ -326,7 +326,7 @@ ON
   dimension: moving_average {
     type: number
     sql:Case
-        When CAST(${TABLE}.Date AS DATE) <= CAST (Current_date() AS DATE)
+        When CAST(${TABLE}.Date AS DATE) <= CAST (@{target_date} AS DATE)
         THEN ${TABLE}.MovingAverageTemperature
         End;;
   }
@@ -334,7 +334,7 @@ ON
     type: average
     sql:
       CASE
-        WHEN CAST(${TABLE}.Date AS DATE) <= CAST (Current_date() AS DATE)
+        WHEN CAST(${TABLE}.Date AS DATE) <= CAST (@{target_date} AS DATE)
         THEN ${average_temperature}
         ELSE NULL
       END ;;
@@ -344,7 +344,7 @@ ON
     type: average
     sql:
       CASE
-        WHEN CAST(${TABLE}.Date AS DATE) > CAST (Current_date() AS DATE)
+        WHEN CAST(${TABLE}.Date AS DATE) > CAST (@{target_date} AS DATE)
         THEN ${average_temperature}
         ELSE NULL
       END ;;
@@ -446,7 +446,7 @@ ON
     type: number
     sql:
     CASE
-      WHEN CAST(${TABLE}.Date AS DATE) > CAST (Current_date() AS DATE)
+      WHEN CAST(${TABLE}.Date AS DATE) > CAST (@{target_date} AS DATE)
       THEN ${TABLE}.DemandPlan
     ELSE
       NULL
@@ -473,7 +473,7 @@ ON
     type: sum
     sql:
     CASE
-      WHEN CAST(${TABLE}.Date AS DATE) <= CAST (Current_date() AS DATE) and DATE_DIFF(CAST (Current_date() AS DATE), Cast(${TABLE}.Date as Date), Day)<=91
+      WHEN CAST(${TABLE}.Date AS DATE) <= CAST (@{target_date} AS DATE) and DATE_DIFF(CAST (@{target_date} AS DATE), Cast(${TABLE}.Date as Date), Day)<=91
       THEN ${TABLE}.Sales
     ELSE
       NULL
@@ -484,7 +484,7 @@ ON
     type: sum
     sql:
     CASE
-      WHEN ${TABLE}.RecordType='SalesOrders' and CAST(${TABLE}.Date AS DATE) <= CAST (Current_date() AS DATE) and DATE_DIFF(CAST (Current_date() AS DATE), Cast(${TABLE}.Date as Date), Day)<=366
+      WHEN ${TABLE}.RecordType='SalesOrders' and CAST(${TABLE}.Date AS DATE) <= CAST (@{target_date} AS DATE) and DATE_DIFF(CAST (@{target_date} AS DATE), Cast(${TABLE}.Date as Date), Day)<=366
       THEN ${TABLE}.Sales
     ELSE
       NULL
@@ -495,7 +495,7 @@ ON
     type: average
     sql:
      CASE
-      WHEN CAST(${TABLE}.Date AS DATE) <= CAST (Current_date() AS DATE)
+      WHEN CAST(${TABLE}.Date AS DATE) <= CAST (@{target_date} AS DATE)
       THEN round(${order_quantity})
      ELSE
       NULL
@@ -506,7 +506,7 @@ ON
     type: average
     sql:
     CASE
-      WHEN CAST(${TABLE}.Date AS DATE) > CAST (Current_date() AS DATE)
+      WHEN CAST(${TABLE}.Date AS DATE) > CAST (@{target_date} AS DATE)
       THEN round(${forecast_quantity})
     ELSE
       NULL
@@ -517,7 +517,7 @@ ON
     type: average
     sql:
     CASE
-     WHEN CAST(${TABLE}.Date AS DATE) > CAST (Current_date() AS DATE)
+     WHEN CAST(${TABLE}.Date AS DATE) > CAST (@{target_date} AS DATE)
      THEN round(${forecast_quantity_lower_bound})
     ELSE
      NULL
@@ -527,7 +527,7 @@ ON
     type: average
     sql:
     CASE
-     WHEN CAST(${TABLE}.Date AS DATE) > CAST (Current_date() AS DATE)
+     WHEN CAST(${TABLE}.Date AS DATE) > CAST (@{target_date} AS DATE)
      THEN round(${forecast_quantity_upper_bound})
     ELSE
      NULL
@@ -538,7 +538,7 @@ ON
     type: sum
     sql:
       CASE
-        WHEN CAST(${TABLE}.Date AS DATE) > CAST (Current_date() AS DATE) and DATE_DIFF(Cast(${TABLE}.Date as Date), CAST (Current_date() AS DATE), Day)<=91
+        WHEN CAST(${TABLE}.Date AS DATE) > CAST (@{target_date} AS DATE) and DATE_DIFF(Cast(${TABLE}.Date as Date), CAST (@{target_date} AS DATE), Day)<=91
         THEN ${forecast_quantity}
       END ;;
     value_format_name: decimal_0
